@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/database";
 import React from "react";
+import { LogoutButton } from "../auth/auth";
 
 export default async function HomePage() {
 	const users = await prisma.user.findMany();
@@ -25,6 +26,7 @@ export default async function HomePage() {
 					<li key={ifNeeded.id}>{ifNeeded.monday}</li>
 				))}
 			</ul>
+			<LogoutButton />
 		</main>
 	);
 }
