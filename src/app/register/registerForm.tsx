@@ -6,6 +6,7 @@ import { Label } from "@/components/ui/label";
 import Link from "next/link";
 import { useState } from "react";
 import { signIn } from "next-auth/react";
+import { Alert } from "@/components/alert";
 
 export const RegisterForm = () => {
 	const [email, setEmail] = useState("");
@@ -15,6 +16,7 @@ export const RegisterForm = () => {
 	const [nickname, setNickname] = useState("");
 	const [role, setRole] = useState("");
 	const [timezone, setTimezone] = useState("");
+	const [error, setError] = useState<String | null>(null);
 
 	const onSubmit = async (e: React.FormEvent) => {
 		e.preventDefault();
@@ -37,11 +39,12 @@ export const RegisterForm = () => {
 			});
 			if (res.ok) {
 				signIn();
+			} else {
+				setError((await res.json()).error);
 			}
-		} catch (error) {
-			console.error(error);
+		} catch (error: any) {
+			setError(error?.message);
 		}
-		console.log("registering user");
 	};
 
 	return (
@@ -58,6 +61,7 @@ export const RegisterForm = () => {
 							className="border-solid border-gray-500"
 							onChange={(e) => setEmail(e.target.value)}
 						/>
+						{error && <Alert>{error}</Alert>}
 					</div>
 					<div className="grid w-full max-w-sm items-center gap-1.5">
 						<Label htmlFor="password">Password</Label>
