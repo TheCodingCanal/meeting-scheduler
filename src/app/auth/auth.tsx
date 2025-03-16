@@ -17,7 +17,11 @@ export const LoginButton = () => {
 
 export const LogoutButton = () => {
 	return (
-		<Button size="lg" className="text-lg" onClick={() => signOut()}>
+		<Button
+			size="lg"
+			className="text-lg"
+			onClick={() => signOut({ callbackUrl: "/ " })}
+		>
 			Sign Out
 		</Button>
 	);
