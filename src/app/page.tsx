@@ -6,12 +6,6 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 
 export default async function Home() {
-	const session = await getServerSession(authOptions);
-
-	if (session) {
-		redirect("/home");
-	}
-
 	return (
 		<main className="flex items-center justify-center h-screen w-screen bg-slate-100">
 			<div className="bg-white shadow-xl rounded-lg p-6 max-w-md w-full -mt-40 transform scale-150">
