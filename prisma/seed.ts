@@ -14,8 +14,10 @@ async function main() {
 			password,
 			role: "Full Stack Developer",
 			timezone: "EST",
+			name: "Test User",
 			firstName: "Test",
 			lastName: "User",
+			nickname: "",
 		},
 	});
 	const schedule = await prisma.schedule.upsert({
