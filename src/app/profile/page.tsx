@@ -27,6 +27,7 @@ export default function Profile() {
 		try {
 			const updatedUser = await mutation.mutateAsync({
 				id,
+				name: `${firstName} ${lastName}`,
 				firstName,
 				lastName,
 				nickname,
