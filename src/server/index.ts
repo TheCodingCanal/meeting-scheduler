@@ -11,11 +11,11 @@ export const appRouter = router({
 			});
 			return user;
 		}),
-	addUser: publicProcedure
+	updateUser: publicProcedure
 		.input(
 			z.object({
-				email: z.string(),
-				password: z.string(),
+				id: z.string(),
+				name: z.string(),
 				firstName: z.string(),
 				lastName: z.string(),
 				nickname: z.string(),
@@ -24,12 +24,11 @@ export const appRouter = router({
 			})
 		)
 		.mutation(async ({ input }) => {
-			const { email, password, firstName, lastName, nickname, role, timezone } =
-				input;
-			const user = await prisma.user.create({
+			const { id, name, firstName, lastName, nickname, role, timezone } = input;
+			const user = await prisma.user.update({
+				where: { id },
 				data: {
-					email,
-					password,
+					name,
 					firstName,
 					lastName,
 					nickname,

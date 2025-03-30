@@ -1,17 +1,15 @@
-import { prisma } from "@/lib/database";
-import { LogoutButton } from "../auth/auth";
-import GetUser from "@/components/getUser";
-import { serverClient } from "../_trpc/serverClient";
 import { getServerSession } from "next-auth";
 import { authOptions } from "../api/auth/[...nextauth]/route";
+import HomeClient from "./homeClient";
 
 export default async function HomePage() {
 	const session = await getServerSession(authOptions);
-	const email = session?.user?.email;
-	return (
-		<main>
-			<GetUser email={email || ""} />
-			<LogoutButton />
-		</main>
-	);
+
+	if (!session) {
+		// You might redirect to a login page or render a message
+		return <p>No session found. Please log in.</p>;
+	}
+
+	// Pass the session to your client component as a prop
+	return <HomeClient session={session} />;
 }
