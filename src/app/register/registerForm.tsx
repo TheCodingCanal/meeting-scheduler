@@ -22,7 +22,7 @@ export const RegisterForm = () => {
 
 	const createUserMutation = trpc.createUser.useMutation({
 		onSuccess: () => {
-			signIn();
+			signIn(undefined, { callbackUrl: "/home" });
 		},
 		onError: (error) => {
 			setError(error.message);
