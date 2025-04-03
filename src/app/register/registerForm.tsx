@@ -7,6 +7,8 @@ import Link from "next/link";
 import { useState } from "react";
 import { signIn } from "next-auth/react";
 import { Alert } from "@/components/alert";
+import { trpc } from "../_trpc/client";
+import { hash } from "bcrypt";
 
 export const RegisterForm = () => {
 	const [email, setEmail] = useState("");
@@ -18,35 +20,30 @@ export const RegisterForm = () => {
 	const [timezone, setTimezone] = useState("");
 	const [error, setError] = useState<String | null>(null);
 
+	const createUserMutation = trpc.createUser.useMutation({
+		onSuccess: () => {
+			signIn();
+		},
+		onError: (error) => {
+			setError(error.message);
+		},
+	});
+
 	const onSubmit = async (e: React.FormEvent) => {
 		e.preventDefault();
+		setError(null);
 
-		try {
-			const res = await fetch("/api/register", {
-				method: "POST",
-				body: JSON.stringify({
-					email,
-					password,
-					firstName,
-					lastName,
-					nickname,
-					role,
-					timezone,
-				}),
-				headers: {
-					"Content-Type": "application/json",
-				},
-			});
-			if (res.ok) {
-				signIn();
-			} else {
-				setError((await res.json()).error);
-			}
-		} catch (error: any) {
-			setError(error?.message);
-		}
+		createUserMutation.mutate({
+			email,
+			password,
+			name: `${firstName} ${lastName}`,
+			firstName,
+			lastName,
+			nickname,
+			role,
+			timezone,
+		});
 	};
-
 	return (
 		<form onSubmit={onSubmit} className="space-y-10 w-[600px]">
 			<div className="flex space-x-10">

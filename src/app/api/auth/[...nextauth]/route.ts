@@ -1,17 +1,17 @@
+import { trpc } from "@/app/_trpc/client";
 import { prisma } from "@/lib/database";
-import { User } from "@prisma/client";
+import { useMutation } from "@tanstack/react-query";
 import { compare } from "bcrypt";
 import NextAuth, { type NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import GoogleProvider from "next-auth/providers/google";
+import { serverClient } from "@/app/_trpc/serverClient";
 
 const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID!;
 const GOOGLE_CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET!;
 
 export const authOptions: NextAuthOptions = {
-	session: {
-		strategy: "jwt",
-	},
+	session: { strategy: "jwt" },
 	providers: [
 		GoogleProvider({
 			clientId: GOOGLE_CLIENT_ID,
@@ -28,84 +28,58 @@ export const authOptions: NextAuthOptions = {
 			},
 			async authorize(credentials) {
 				if (!credentials?.email || !credentials.password) {
-					return null;
+					throw new Error("Email and password are required.");
 				}
 
-				const user = await prisma.user.findUnique({
-					where: {
-						email: credentials.email,
-					},
+				const user = await serverClient.getUser.query({
+					email: credentials.email,
 				});
 
 				if (!user) {
-					return null;
+					throw new Error("User not found.");
 				}
 
 				const isPasswordValid = await compare(
-					credentials.password, // user string
-					user.password // encrypted string
+					credentials.password,
+					user.password
 				);
-
 				if (!isPasswordValid) {
-					return null;
+					throw new Error("Invalid password.");
 				}
 
 				return {
 					id: user.id,
 					email: user.email,
 					name: user.firstName,
+					role: user.role,
 				};
 			},
 		}),
 	],
 	callbacks: {
 		async signIn({ account, profile }) {
-			if (!account) {
-				console.error("No account found");
-				return false;
-			}
+			if (!account) return false;
 
-			// Handle social logins (Google, etc.)
 			if (account.provider !== "credentials") {
-				if (!profile?.email) {
-					console.error("No profile email found");
+				// Handle social logins (e.g., Google)
+				if (!profile?.email) return false;
+
+				try {
+					// Call tRPC to upsert the user data
+					// const upsertUserMutation = trpc.upsertUser.useMutation();
+					await serverClient.upsertUser.mutate({
+						email: profile.email,
+						name: profile.name ?? "Unknown User",
+					});
+					return true; // Allow sign-in
+				} catch (error) {
+					console.error("Error upserting user via tRPC:", error);
 					return false;
 				}
-
-				await prisma.user.upsert({
-					where: { email: profile.email },
-					create: {
-						email: profile.email,
-						name: profile.name as string,
-						password: "", // Social providers don't need passwords
-						role: "user",
-						timezone: "",
-						firstName: "",
-						lastName: "",
-						nickname: "",
-					},
-					update: {
-						name: profile.name ?? "",
-					},
-				});
-
-				return true;
 			}
 
 			// Handle CredentialsProvider (User is already validated in `authorize`)
-			if (account.provider === "credentials") {
-				return true;
-			}
-
-			return false;
-		},
-		session: ({ session, token }) => {
-			console.log("Session Callback", { session, token });
-			return session;
-		},
-		jwt: ({ token, user }) => {
-			console.log("JWT Callback", { token, user });
-			return token;
+			return account.provider === "credentials";
 		},
 	},
 };
