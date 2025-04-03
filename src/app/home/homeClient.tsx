@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect } from "react";
-import { LogoutButton } from "../auth/auth";
 import { userUserStore } from "../../../stores/userStore";
 import { trpc } from "../_trpc/client";
 
@@ -20,9 +19,5 @@ export default function HomeClient({ session }: { session: any }) {
 		}
 	}, [currentUser, user, update]);
 
-	return (
-		<main>
-			<LogoutButton />
-		</main>
-	);
+	return <main>Home</main>;
 }

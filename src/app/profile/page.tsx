@@ -43,7 +43,7 @@ export default function Profile() {
 
 	return (
 		<div className="h-screen w-screen flex justify-center items-center bg-slate-100">
-			<div className="shadow-xl px-8 pb-8 pt-12 bg-white rounded-xl space-y-12">
+			<div className="shadow-xl -mt-20 px-8 pb-8 pt-12 bg-white rounded-xl space-y-12">
 				<h1 className="text-4xl font-bold">Profile</h1>
 				<form onSubmit={onSubmit} className="space-y-10 w-[600px]">
 					<div className="flex space-x-10">
