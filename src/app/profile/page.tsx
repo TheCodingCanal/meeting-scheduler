@@ -12,7 +12,7 @@ import { useRouter } from "next/navigation";
 export default function Profile() {
 	const { user, update } = userUserStore();
 	console.log("user", user);
-	const [id, setId] = useState(user?.id || "");
+	const [id] = useState(user?.id || "");
 	const [firstName, setFirstName] = useState(user?.firstName || "");
 	const [lastName, setLastName] = useState(user?.lastName || "");
 	const [nickname, setNickname] = useState(user?.nickname || "");

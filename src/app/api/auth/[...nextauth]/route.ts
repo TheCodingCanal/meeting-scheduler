@@ -1,6 +1,3 @@
-import { trpc } from "@/app/_trpc/client";
-import { prisma } from "@/lib/database";
-import { useMutation } from "@tanstack/react-query";
 import { compare } from "bcrypt";
 import NextAuth, { type NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
