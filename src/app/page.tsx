@@ -1,9 +1,7 @@
-import { getServerSession } from "next-auth";
-import { authOptions } from "./api/auth/[...nextauth]/route";
 import { LoginButton } from "./auth/auth";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { redirect } from "next/navigation";
+import "../../otel.ts";
 
 export default async function Home() {
 	return (

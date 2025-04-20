@@ -8,7 +8,6 @@ import { useState } from "react";
 import { signIn } from "next-auth/react";
 import { Alert } from "@/components/alert";
 import { trpc } from "../_trpc/client";
-import { hash } from "bcrypt";
 
 export const RegisterForm = () => {
 	const [email, setEmail] = useState("");
@@ -18,7 +17,7 @@ export const RegisterForm = () => {
 	const [nickname, setNickname] = useState("");
 	const [role, setRole] = useState("");
 	const [timezone, setTimezone] = useState("");
-	const [error, setError] = useState<String | null>(null);
+	const [error, setError] = useState<string | null>(null);
 
 	const createUserMutation = trpc.createUser.useMutation({
 		onSuccess: () => {
@@ -129,6 +128,7 @@ export const RegisterForm = () => {
 					</div>
 				</div>
 			</div>
+			<div>{error}</div>
 			<div className="w-3/5 m-auto">
 				<Button className="w-full text-lg" size="lg">
 					Register

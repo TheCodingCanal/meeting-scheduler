@@ -4,7 +4,9 @@ import { useEffect } from "react";
 import { userUserStore } from "../../../stores/userStore";
 import { trpc } from "../_trpc/client";
 
-export default function HomeClient({ session }: { session: any }) {
+import { Session } from "next-auth";
+
+export default function HomeClient({ session }: { session: Session }) {
 	const { user, update } = userUserStore();
 
 	// Fetch user data from tRPC
